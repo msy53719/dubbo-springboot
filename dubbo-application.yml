@@ -1,0 +1,7 @@
+version: "3.3"
+services: 
+  ssmdocker.server:
+    image: dubbo-springboot:latest
+    container_name: dubbo-springboot.server
+    ports:
+      - 20880:20880
