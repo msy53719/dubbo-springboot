@@ -6,7 +6,19 @@
 	<artifactId>com.project.framework</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.1.0.BUILD-SNAPSHOT</version>
+	</parent>
+
 	<dependencies>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>com.alibaba.boot</groupId>
 			<artifactId>dubbo-spring-boot-starter</artifactId>
@@ -14,47 +26,64 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>4.3.16.RELEASE</version>
+			<groupId>com.alibaba</groupId>
+			<artifactId>dubbo</artifactId>
+			<version>2.6.5</version>
+		</dependency>
+		<!-- Spring Context Extras -->
+		<dependency>
+			<groupId>com.alibaba.spring</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>1.0.2</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.101tec</groupId>
+			<artifactId>zkclient</artifactId>
+			<version>0.10</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.2</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 
 	<build>
+
 		<resources>
 			<resource>
-				<targetPath>${project.build.directory}/classes</targetPath>
 				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
 				<includes>
-					<include>**/*.xml</include>
 					<include>**/*.properties</include>
+					<include>**/*.xml</include>
+					<include>**/*.tld</include>
+					<include>**/*.yml</include>
 				</includes>
+				<filtering>false</filtering>
 			</resource>
 			<resource>
-				<targetPath>${project.build.directory}/classes/META-INF/spring</targetPath>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
+				<directory>src/main/java</directory>
 				<includes>
-					<include>dubbo-provider.xml</include>
+					<include>**/*.properties</include>
+					<include>**/*.xml</include>
+					<include>**/*.tld</include>
 				</includes>
+				<filtering>false</filtering>
 			</resource>
 		</resources>
 
 		<plugins>
 
 			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
@@ -65,13 +94,12 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.4</version>
 				<configuration>
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>/lib/</classpathPrefix>
-							<mainClass>com.dubbopro.core.provider.application.ServerStart</mainClass>
+							<mainClass>com.project.framework.start.ApplicationsForXmlStart</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
@@ -80,7 +108,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
-				<version>3.0.2</version>
 				<executions>
 					<execution>
 						<id>copy</id>
@@ -95,6 +122,39 @@
 				</executions>
 			</plugin>
 
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>1.0.0</version>
+				<configuration>
+					<imageName>dubbo-springboot</imageName>
+					<!-- <dockerHost>https://192.168.99.100:2376</dockerHost> -->
+					<!--<dockerDirectory>src/main/docker</dockerDirectory> -->
+					<baseImage>java:8</baseImage>
+					<resources>
+						<resource>
+							<targetPath>/work</targetPath>
+							<directory>${project.build.directory}</directory>
+							<include>*.jar</include>
+						</resource>
+						<resource>
+							<targetPath>/work/lib</targetPath>
+							<directory>${project.build.directory}/lib</directory>
+							<include>*.jar</include>
+						</resource>
+						<resource>
+							<targetPath>/app</targetPath>
+							<directory>${project.basedir}/ext</directory>
+							<include>start.sh</include>
+						</resource>
+					</resources>
+					<workdir>/app</workdir>
+					<runs>
+						<run>chmod 777 start.sh</run>
+					</runs>
+					<cmd>sh /app/start.sh docker</cmd>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -107,6 +167,18 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
+
+		<repository>
+			<id>sonatype-nexus-snapshots</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+
 		<repository>
 			<id>spring-milestones</id>
 			<name>Spring Milestones</name>

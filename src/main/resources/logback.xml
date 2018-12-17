@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="10" debug="false">
 	<property name="log_home" value="logs" />
-	<property name="app_name" value="webtest-framework" />
+	<property name="app_name" value="dubbo-springboot" />
 
 	<appender name="STDOUT"
 		class="ch.qos.logback.core.ConsoleAppender">
 		<layout class="ch.qos.logback.classic.PatternLayout">
-			<Pattern>%d{yyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50}
-				-%msg%n
+			<Pattern>%d{yyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level%logger{50}-%msg%n
 			</Pattern>
 		</layout>
 	</appender>
@@ -25,23 +24,20 @@
 			</fileNamePattern>
 			<maxHistory>7</maxHistory>
 		</rollingPolicy>
-				<encoder>
-			<pattern>%d{yyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50}-%msg%n</pattern>
+		<encoder>
+			<pattern>%d{yyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level%logger{50}-%msg%n</pattern>
 			<charset>UTF-8</charset>
 		</encoder>
-		<!-- <layout class="ch.qos.logback.classic.PatternLayout">
-			<Pattern>%d{yyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50}
-				-%msg%n
-			</Pattern>
-		</layout> -->
+		<!-- <layout class="ch.qos.logback.classic.PatternLayout"> <Pattern>%d{yyy-MM-dd 
+			HH:mm:ss.SSS} [%thread] %-5level %logger{50} -%msg%n </Pattern> </layout> -->
 		<prudent>true</prudent>
 	</appender>
 
-	<logger name="org.springframework" level="INFO" />
+	<logger name="org.springframework" level="error" />
 
-	<logger name="org.apache" level="INFO" />
+	<logger name="ch.qos.logback" level="error" />
 
-	<logger name="com.webtest.framework" level="DEBUG" />
+	<logger name="com.project.framework" level="error" />
 
 	<root level="debug">
 		<appender-ref ref="STDOUT" />
